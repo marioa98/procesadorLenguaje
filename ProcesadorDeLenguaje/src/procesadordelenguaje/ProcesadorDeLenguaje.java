@@ -6,31 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProcesadorDeLenguaje {
-
-    public static void main(String[] args)throws IOException{
-        
-        File file = new File("C:\\Users\\mario\\OneDrive\\Escritorio\\Mis cosas\\Ing en Soft\\Programación distribuida\\1mbma.txt");
-        File file2 = new File("C:\\Users\\mario\\OneDrive\\Escritorio\\Mis cosas\\Ing en Soft\\Programación distribuida\\2mbma.txt");
-        File file3 = new File("C:\\Users\\mario\\OneDrive\\Escritorio\\Mis cosas\\Ing en Soft\\Programación distribuida\\3mbma.txt");
-        
-        System.out.println("======= Palabras repetidas en los escritos =======");
-        System.out.println(totalPalabras(file));
-        System.out.println(totalPalabras(file2));
-        System.out.println(totalPalabras(file3));
-        
-        System.out.println("\n======= Palabras sin repetir en cada escrito =======");
-        System.out.println(palabrasSinRepetir(file));
-        System.out.println(palabrasSinRepetir(file2));
-        System.out.println(palabrasSinRepetir(file3));
-        
-        File[] files ={file, file2, file3};
-        
-        System.out.println("\n======= Palabras sin repetir en "+files.length+" escritos =======");
-        totalPalabrasSinRepetir(files);
-        
-    }
-    
-    private static String totalPalabras(File file) throws IOException{
+   
+    public static String totalPalabras(File file) throws IOException{
         
         FileInputStream fileStream = new FileInputStream(file);
         InputStreamReader input = new InputStreamReader(fileStream);
@@ -48,10 +25,12 @@ public class ProcesadorDeLenguaje {
             }
         }
         
+        reader.close();
+        
         return "Total de palabras en el archivo "+file.getName()+": "+countWord;
     }
     
-    private static String palabrasSinRepetir(File file)throws IOException{
+    public static String palabrasSinRepetir(File file)throws IOException{
         
         Map<String, Integer> words = new HashMap<String, Integer>();
         
@@ -79,6 +58,8 @@ public class ProcesadorDeLenguaje {
         for(Map.Entry<String, Integer> e : words.entrySet()){
             countWord += 1;
         }
+        
+        reader.close();
         
         return "Total de palabras sin repetir en el archivo "+file.getName()+": "+countWord;
                 
@@ -115,6 +96,82 @@ public class ProcesadorDeLenguaje {
         }
         
         System.out.println("Total: "+countWord);
+    }
+    
+    public static String totalCaracteres(File f) throws IOException{
+        FileInputStream fs = new FileInputStream(f);
+        InputStreamReader input = new InputStreamReader(fs);
+        BufferedReader reader = new BufferedReader(input);
+        
+        String line;
+        int characterCount = 0;
+        
+        while((line = reader.readLine()) != null){
+            if(!(line.equals(""))){
+                characterCount += line.length();
+            }
+        }
+        
+        String total = "Total de caracteres en el archivo "+ f.getName()
+                +": "+characterCount;
+        
+        
+        reader.close();
+        return total;
+    }
+    
+    public static String totalSilabas(File f)throws IOException{
+        FileInputStream fs = new FileInputStream(f);
+        InputStreamReader input = new InputStreamReader(fs);
+        BufferedReader reader = new BufferedReader(input);
+
+        int syllables = 0;
+        String line;
+        
+        while((line = reader.readLine())!=null){
+            syllables += contarSilabas(line);
+        }
+        
+        String total = "Total de silabas en "+f.getName()+
+                ": "+syllables;
+        reader.close();
+        return total;
+    }
+    
+    public static int contarSilabas(String word){
+        int count = 0;
+        word = word.toLowerCase();
+        for (int i = 0; i < word.length(); i++) {
+            if (word.charAt(i) == '\"' || word.charAt(i) == '\'' || word.charAt(i) == '-' || word.charAt(i) == ',' || word.charAt(i) == ')' || word.charAt(i) == '(') {
+                word = word.substring(0,i)+word.substring(i+1, word.length());
+            }
+        }
+        boolean isPrevVowel = false;
+        for (int j = 0; j < word.length(); j++) {
+            if (word.contains("a") || word.contains("e") || word.contains("i") || word.contains("o") || word.contains("u")) {
+                if (esVocal(word.charAt(j)) && !((word.charAt(j) == 'e') && (j == word.length()-1))) {
+                    if (isPrevVowel == false) {
+                        count++;
+                        isPrevVowel = true;
+                    }
+                } else {
+                    isPrevVowel = false;
+                }
+            } else {
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+    
+    public static boolean esVocal(char c){
+        
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            return true;
+        } else {
+            return false;
+        }
     }
     
 }
